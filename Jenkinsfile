@@ -5,35 +5,35 @@ pipeline {
         
         stage("code"){
             steps{
-                git url: "https://github.com/LondheShubham153/node-todo-cicd.git", branch: "master"
-                echo 'bhaiyya code clone ho gaya'
+                git url: "https://github.com/rksdutt/node-todo-cicd.git", branch: "master"
+                echo 'code cloned from repo'
             }
         }
         stage("build and test"){
             steps{
-                sh "docker build -t node-app-test-new ."
-                echo 'code build bhi ho gaya'
+                sh "docker build -t node-app-catalog ."
+                echo 'code build is done'
             }
         }
         stage("scan image"){
             steps{
-                echo 'image scanning ho gayi'
+                echo 'image scanning has done'
             }
         }
         stage("push"){
             steps{
-                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                sh "docker tag node-app-test-new:latest ${env.dockerHubUser}/node-app-test-new:latest"
-                sh "docker push ${env.dockerHubUser}/node-app-test-new:latest"
-                echo 'image push ho gaya'
+                withCredentials([usernamePassword(credentialsId:"dockerhubRepo",passwordVariable:"dockerhubRepoPass",usernameVariable:"dockerhubRepoUser")]){
+                sh "docker login -u ${env.dockerhubRepoUser} -p ${env.dockerhubRepoPass}"
+                sh "docker tag node-app-catalog:latest ${env.dockerhubRepoUser}/node-app-catalog:latest"
+                sh "docker push ${env.dockerhubRepoUser}/node-app-catalog:latest"
+                echo 'image pushed to repo'
                 }
             }
         }
         stage("deploy"){
             steps{
                 sh "docker-compose down && docker-compose up -d"
-                echo 'deployment ho gayi'
+                echo 'deployment has done'
             }
         }
     }
